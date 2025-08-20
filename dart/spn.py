@@ -1,6 +1,5 @@
 # Score Prediction Nets
 from cv2 import mean
-from sympy import false
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

@@ -517,7 +517,7 @@ def main(args):
                     'args': args,
                 }, checkpoint_path)
 
-        test_stats = evaluate(data_loader_val, model, device, amp_autocast, args)
+        test_stats = evaluate(data_loader_val, model, device, amp_autocast)
         print(f"Accuracy of the network on the {len(dataset_val)} test images: {test_stats['acc1']:.1f}%")
         
         if max_accuracy < test_stats["acc1"]:

@@ -90,7 +90,7 @@ class DynamicAdaptiveRegionTokenizer(nn.Module):
         # Interpolate the original image to a fixed size (224x224) for the SPN.
         org_x = F.interpolate(org_x, size=(224, 224), mode='bilinear', align_corners=False)
         # Predict importance scores for image regions using the SPN.
-        score = self.spn(x)
+        score = self.spn(org_x)
         # Normalize scores to get a probability distribution function (PDF).
         pdf = score / score.sum(dim=-1,keepdim=True) # (B, seqlen)
 
@@ -199,7 +199,7 @@ class DynamicAdaptiveImageReshaper(nn.Module):
             org_x = F.interpolate(org_x, size=(224, 224), mode='bilinear', align_corners=False)
             
         # Predict importance scores and normalize to get a PDF.
-        score = self.spn(x)
+        score = self.spn(org_x)
         pdf = score / score.sum(dim=-1,keepdim=True) # (B, seqlen)
 
         ret['pdf'] = pdf
@@ -216,6 +216,7 @@ class DynamicAdaptiveImageReshaper(nn.Module):
         # Calculate dynamic column heights based on horizontal importance.
         # This is done by transposing the assumed 2D layout of the PDF and reusing the same logic.
         col_heights = pdf_to_row_heights(ret['pdf'].view(n,14,14).permute(0,2,1).reshape(n,-1), x.size(2) // (1 if not self.high_res else 2), target_h=target_h)
+        ret['col_heights'] = col_heights
         col_pos = torch.cumsum(col_heights,dim=1) # Cumulative sum to find column boundaries.
         
         # Construct the patch sampling grid edges from column positions.
@@ -233,11 +234,12 @@ class DynamicAdaptiveImageReshaper(nn.Module):
         
         # If positional embeddings are provided, resample them both vertically and horizontally.
         if pos_embed is not None:
-            pos_embed = pos_embed.repeat(n, 1, 1)
+            dim = pos_embed.size(2)
+            pos_embed = pos_embed.expand(n, -1, -1)
             # Resample vertically based on row heights.
             pos_embed = resample_tokens_by_heights(pos_embed, row_heights/row_heights.sum()*224)
             # Reshape, resample horizontally based on column heights, and reshape back.
-            pos_embed = resample_tokens_by_heights(pos_embed.view(n,target_h,14,self.dim).permute(0,2,1,3).reshape(n,-1,self.dim), col_heights/col_heights.sum()*224, org_h=target_h).view(n,target_w,target_h,self.dim).permute(0,2,1,3).reshape(n,-1,self.dim)
+            pos_embed = resample_tokens_by_heights(pos_embed.view(n,target_h,14,dim).permute(0,2,1,3).reshape(n,-1,dim), col_heights/col_heights.sum()*224, org_h=target_h).view(n,target_w,target_h,dim).permute(0,2,1,3).reshape(n,-1,dim)
             ret['pos'] = pos_embed
             
         return x if not ret_dict else ret
