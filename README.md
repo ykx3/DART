@@ -100,6 +100,10 @@ DART is designed as a self-contained component and has minimal dependencies.
     pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
     ```
 
+## Video Training
+For video fine-tuning, we follow the training recipes from VideoMamba. We only add a new flag `--num_patches` to control the total number of dynamic patches. See `video/README.md` for a runnable example.
+- Reference: [VideoMamba](https://github.com/OpenGVLab/VideoMamba)
+
 ## Model Zoo
 
 We provide pretrained model weights for various backbones enhanced with DART.
