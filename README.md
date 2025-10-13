@@ -1,10 +1,9 @@
 
-# DART: Differentiable Dynamic Adaptive Region Tokenizer for Vision Transformer and Mamba
+# DART: Differentiable Adaptive Region Tokenizer for Vision Foundation Models
 
-[](https://pytorch.org/)
-[](https://www.google.com/search?q=https://arxiv.org/abs/24XX.XXXXX) [](https://opensource.org/licenses/MIT)
+ [PyTorch](https://pytorch.org/) · [arXiv:2506.10390](https://arxiv.org/abs/2506.10390) · [MIT License](https://opensource.org/licenses/MIT)
 
-This repository contains the official PyTorch implementation for the paper: **DART: Differentiable Dynamic Adaptive Region Tokenizer for Vision Transformer and Mamba**.
+This repository contains the official PyTorch implementation for the paper: **DART: Differentiable Adaptive Region Tokenizer for Vision Foundation Models**.
 
 DART is a fully differentiable tokenizer that adaptively partitions images into content-dependent patches of varying sizes, allocating more tokens to information-rich regions. It can be seamlessly integrated into Vision Transformer (ViT) and Vision Mamba (Vim) architectures to enhance performance with minimal or even reduced computational overhead.
 
@@ -17,7 +16,21 @@ DART is a fully differentiable tokenizer that adaptively partitions images into 
 
 ## Abstract
 
-Recently, non-convolutional models such as the Vision Transformer (ViT) and Vision Mamba (Vim) have achieved remarkable performance in computer vision tasks. However, their reliance on fixed-size patches often results in excessive encoding of background regions and omission of critical local details, especially when informative objects are sparsely distributed. To address this, we introduce a *fully differentiable* **Dynamic Adaptive Region Tokenizer (DART)**, which *adaptively partitions images into content-dependent patches of varying sizes*. DART combines learnable region scores with piecewise differentiable quantile operations to allocate denser tokens to information-rich areas. Despite introducing only approximately 1 million (1M) additional parameters, DART improves accuracy by 2.1% on DeiT (ImageNet-1K). Unlike methods that uniformly increase token density to capture fine-grained details, DART offers a more efficient alternative, achieving a 45% FLOPs reduction with superior performance. Extensive experiments on DeiT, Vim, and VideoMamba confirm that DART consistently enhances accuracy while incurring minimal or even reduced computational overhead.
+The content-agnostic, fixed-grid tokenizers used by standard large-scale vision
+models like Vision Transformer (ViT) and Vision Mamba (Vim) represent a fundamental performance bottleneck, creating a trade-off between capturing fine-grained
+detail and suffering from redundant computation. To resolve this dilemma, we
+introduce DART, a fully differentiable Dynamic Adaptive Region Tokenizer.
+DART employs learnable region scores and quantile-based partitioning to create
+content-aware patches of varying sizes, intelligently allocating a higher token
+density to information-rich regions. The impact of this approach is profound: it
+unlocks a more intelligent scaling paradigm, where a DART-equipped DeiT-Small
+(22M parameters) matches the performance of a DeiT-Base (86M) with nearly
+double the inference speed by efficiently capturing high-resolution details in key
+regions. Furthermore, the principle of adaptive tokenization proves its generality
+with clear benefits in dense prediction and spatiotemporal video tasks. We argue
+that by resolving the tokenizer bottleneck at its source, adaptive tokenization is
+a key component for building the next generation of more efficient and capable
+foundation models for multimodal AI, robotics, and content generation.
 
 ## Main Results
 
@@ -86,7 +99,7 @@ DART is designed as a self-contained component and has minimal dependencies.
 1.  **Clone the repository:**
 
     ```bash
-    git clone https://github.com/your-username/DART.git
+    git clone https://github.com/HCPLab-SYSU/DART.git
     cd DART
     ```
 
@@ -170,7 +183,7 @@ If you find our work useful in your research, please consider citing our paper:
 
 ```bibtex
 @article{yin2025dart,
-  title={DART: Differentiable Dynamic Adaptive Region Tokenizer for Vision Transformer and Mamba},
+  title={DART: Differentiable Adaptive Region Tokenizer for Vision Foundation Models},
   author={Shicheng Yin and Kaixuan Yin and Yang Liu and Weixing Chen and Liang Lin},
   journal={arXiv preprint arXiv:2506.10390},
   year={2025}
