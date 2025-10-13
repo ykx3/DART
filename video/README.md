@@ -74,7 +74,41 @@ python -m torch.distributed.launch --nproc_per_node=$NC --use_env main.py \
     --dist_eval \
     --test_best
 ```
-- Hyperparameters and recipes follow the original VideoMamba scripts; we only add `--num_patches` to control the total number of dynamic patches (e.g., `14×14×T`). See [VideoMamba](https://github.com/OpenGVLab/VideoMamba) for more details.
+- Hyperparameters and recipes follow the original VideoMamba scripts; we add `--num_patches` to control the total number of dynamic patches (e.g., `14×14×T`). See [VideoMamba](https://github.com/OpenGVLab/VideoMamba) for more details.
+
+Example with `--num_patches` explicitly set (e.g., 14×14 over 16 frames):
+```bash
+python -m torch.distributed.launch --nproc_per_node=$NC --use_env main.py \
+    --model dvideomamba_tiny \
+    --data_path ${DATA_PATH} \
+    --prefix ${DATA_PATH} \
+    --data_set 'Kinetics_sparse' \
+    --split ' ' \
+    --nb_classes 400 \
+    --log_dir ${OUTPUT_DIR} \
+    --output_dir ${OUTPUT_DIR} \
+    --batch_size $B \
+    --num_sample 2 \
+    --input_size 224 \
+    --short_side_size 224 \
+    --save_ckpt_freq 100 \
+    --num_frames 16 \
+    --num_patches $((14*14*16)) \
+    --num_workers $NP \
+    --warmup_epochs 5 \
+    --tubelet_size 1 \
+    --epochs 70 \
+    --lr 2e-4 \
+    --drop_path 0.1 \
+    --aa rand-m5-n2-mstd0.25-inc1 \
+    --opt adamw \
+    --opt_betas 0.9 0.999 \
+    --weight_decay 0.1 \
+    --test_num_segment 4 \
+    --test_num_crop 3 \
+    --dist_eval \
+    --test_best
+```
 
 ### Notes
 - Position/time embeddings are optional. If provided, they will be dynamically resampled to match the non-uniform grid.
